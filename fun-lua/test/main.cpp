@@ -10,6 +10,7 @@
 
 #include "TestParserResult.h"
 #include "TestCPSParser.h"
+#include "TestStream.h";
 #include <fstream>
 #include <iostream>
 using namespace std;
@@ -18,5 +19,6 @@ using namespace std;
 int main() {
     TestParserResult();
     TestCPSParser();
+    TestStream();
     return 0;
 }

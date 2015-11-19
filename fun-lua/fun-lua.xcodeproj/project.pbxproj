@@ -10,6 +10,8 @@
 		CEF8CB3B1BFD9CDE00024E80 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CB3A1BFD9CDE00024E80 /* main.cpp */; };
 		CEF8CC581BFDC51B00024E80 /* librapidcheck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEF8CC571BFDC51B00024E80 /* librapidcheck.a */; };
 		CEF8CCFF1BFDC6AC00024E80 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CCFA1BFDC6AC00024E80 /* main.cpp */; };
+		CEF8CD051BFDFD7700024E80 /* TexStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD031BFDFD7700024E80 /* TexStream.cpp */; };
+		CEF8CD061BFDFD7700024E80 /* TexStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD031BFDFD7700024E80 /* TexStream.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -43,6 +45,9 @@
 		CEF8CCFA1BFDC6AC00024E80 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		CEF8CD011BFDCC6B00024E80 /* CPS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPS.h; sourceTree = "<group>"; };
 		CEF8CD021BFDCCA400024E80 /* CPSResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSResult.h; sourceTree = "<group>"; };
+		CEF8CD031BFDFD7700024E80 /* TexStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TexStream.cpp; sourceTree = "<group>"; };
+		CEF8CD041BFDFD7700024E80 /* TexStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TexStream.h; sourceTree = "<group>"; };
+		CEF8CD071BFE026A00024E80 /* TestStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestStream.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +94,7 @@
 				CEF8CB3A1BFD9CDE00024E80 /* main.cpp */,
 				CEF8CB471BFDB5A600024E80 /* TestParserResult.h */,
 				CEF8CC561BFDC27C00024E80 /* TestCPSParser.h */,
+				CEF8CD071BFE026A00024E80 /* TestStream.h */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -124,6 +130,8 @@
 		CEF8CCFB1BFDC6AC00024E80 /* parser */ = {
 			isa = PBXGroup;
 			children = (
+				CEF8CD031BFDFD7700024E80 /* TexStream.cpp */,
+				CEF8CD041BFDFD7700024E80 /* TexStream.h */,
 			);
 			path = parser;
 			sourceTree = "<group>";
@@ -213,6 +221,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CEF8CCFF1BFDC6AC00024E80 /* main.cpp in Sources */,
+				CEF8CD051BFDFD7700024E80 /* TexStream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,6 +230,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CEF8CB3B1BFD9CDE00024E80 /* main.cpp in Sources */,
+				CEF8CD061BFDFD7700024E80 /* TexStream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

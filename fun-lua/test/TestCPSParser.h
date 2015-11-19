@@ -48,6 +48,20 @@ inline CPS::CPSType<char,std::string>::Fun charParser(char c)
     return satParser([c](char x)->bool {return c == x;});
 }
 
+inline CPS::CPSType<std::string, std::string>::Fun strParser(const std::string& str)
+{
+    if (str.empty()) {
+        return CPS::CPSType<std::string, std::string>::ret("");
+    }
+    auto x = charParser(str.front());
+    auto xs = strParser(str.substr(1));
+    return CPS::Bind<char, std::string, std::string>(x, [ xs,str](const char&)->CPS::CPSType<std::string, std::string>::Fun {
+        return CPS::Bind<std::string, std::string, std::string>(xs,[str](const std::string&)->CPS::CPSType<std::string, std::string>::Fun{
+            return CPS::CPSType<std::string, std::string>::ret(str);
+        });
+    });
+}
+
 inline void TestCPSParser(){
     
     rc::check("item",[](const std::string& msg){
@@ -81,7 +95,13 @@ inline void TestCPSParser(){
         auto r = item(msg);
         RC_ASSERT(r->value() == c);
     });
-    
+    //string
+    rc::check("string",[](const std::string& msg){
+        auto p = strParser(msg);
+        auto r = p(msg);
+        RC_ASSERT( r->value() == msg);
+        RC_ASSERT(r->remain() == "");
+    });
 }
 
 

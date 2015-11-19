@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CEF8CB231BFD995A00024E80 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CB221BFD995A00024E80 /* main.cpp */; };
+		CEF8CB3B1BFD9CDE00024E80 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CB3A1BFD9CDE00024E80 /* main.cpp */; };
+		CEF8CC581BFDC51B00024E80 /* librapidcheck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEF8CC571BFDC51B00024E80 /* librapidcheck.a */; };
+		CEF8CCFF1BFDC6AC00024E80 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CCFA1BFDC6AC00024E80 /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -20,11 +22,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		CEF8CB361BFD9CDE00024E80 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		CEF8CB1F1BFD995A00024E80 /* fun-lua */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "fun-lua"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CEF8CB221BFD995A00024E80 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		CEF8CB381BFD9CDE00024E80 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEF8CB3A1BFD9CDE00024E80 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		CEF8CB471BFDB5A600024E80 /* TestParserResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestParserResult.h; sourceTree = "<group>"; };
+		CEF8CC561BFDC27C00024E80 /* TestCPSParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestCPSParser.h; sourceTree = "<group>"; };
+		CEF8CC571BFDC51B00024E80 /* librapidcheck.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librapidcheck.a; path = libs/rapidcheck/librapidcheck.a; sourceTree = SOURCE_ROOT; };
+		CEF8CCFA1BFDC6AC00024E80 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		CEF8CD011BFDCC6B00024E80 /* CPS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPS.h; sourceTree = "<group>"; };
+		CEF8CD021BFDCCA400024E80 /* CPSResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSResult.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,13 +53,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CEF8CB351BFD9CDE00024E80 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEF8CC581BFDC51B00024E80 /* librapidcheck.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		CEF8CB161BFD995A00024E80 = {
 			isa = PBXGroup;
 			children = (
-				CEF8CB211BFD995A00024E80 /* fun-lua */,
+				CEF8CCF71BFDC6AC00024E80 /* fun-lua */,
+				CEF8CB391BFD9CDE00024E80 /* test */,
 				CEF8CB201BFD995A00024E80 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -50,16 +77,62 @@
 			isa = PBXGroup;
 			children = (
 				CEF8CB1F1BFD995A00024E80 /* fun-lua */,
+				CEF8CB381BFD9CDE00024E80 /* test */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CEF8CB211BFD995A00024E80 /* fun-lua */ = {
+		CEF8CB391BFD9CDE00024E80 /* test */ = {
 			isa = PBXGroup;
 			children = (
-				CEF8CB221BFD995A00024E80 /* main.cpp */,
+				CEF8CC571BFDC51B00024E80 /* librapidcheck.a */,
+				CEF8CB3A1BFD9CDE00024E80 /* main.cpp */,
+				CEF8CB471BFDB5A600024E80 /* TestParserResult.h */,
+				CEF8CC561BFDC27C00024E80 /* TestCPSParser.h */,
+			);
+			path = test;
+			sourceTree = "<group>";
+		};
+		CEF8CCF71BFDC6AC00024E80 /* fun-lua */ = {
+			isa = PBXGroup;
+			children = (
+				CEF8CCF81BFDC6AC00024E80 /* codegen */,
+				CEF8CCF91BFDC6AC00024E80 /* gc */,
+				CEF8CCFA1BFDC6AC00024E80 /* main.cpp */,
+				CEF8CCFB1BFDC6AC00024E80 /* parser */,
+				CEF8CCFE1BFDC6AC00024E80 /* vm */,
+				CEF8CD011BFDCC6B00024E80 /* CPS.h */,
+				CEF8CD021BFDCCA400024E80 /* CPSResult.h */,
 			);
 			path = "fun-lua";
+			sourceTree = "<group>";
+		};
+		CEF8CCF81BFDC6AC00024E80 /* codegen */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = codegen;
+			sourceTree = "<group>";
+		};
+		CEF8CCF91BFDC6AC00024E80 /* gc */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = gc;
+			sourceTree = "<group>";
+		};
+		CEF8CCFB1BFDC6AC00024E80 /* parser */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = parser;
+			sourceTree = "<group>";
+		};
+		CEF8CCFE1BFDC6AC00024E80 /* vm */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = vm;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -82,6 +155,23 @@
 			productReference = CEF8CB1F1BFD995A00024E80 /* fun-lua */;
 			productType = "com.apple.product-type.tool";
 		};
+		CEF8CB371BFD9CDE00024E80 /* test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CEF8CB3C1BFD9CDE00024E80 /* Build configuration list for PBXNativeTarget "test" */;
+			buildPhases = (
+				CEF8CB341BFD9CDE00024E80 /* Sources */,
+				CEF8CB351BFD9CDE00024E80 /* Frameworks */,
+				CEF8CB361BFD9CDE00024E80 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = test;
+			productName = test;
+			productReference = CEF8CB381BFD9CDE00024E80 /* test */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -92,6 +182,9 @@
 				ORGANIZATIONNAME = user;
 				TargetAttributes = {
 					CEF8CB1E1BFD995A00024E80 = {
+						CreatedOnToolsVersion = 6.2;
+					};
+					CEF8CB371BFD9CDE00024E80 = {
 						CreatedOnToolsVersion = 6.2;
 					};
 				};
@@ -109,6 +202,7 @@
 			projectRoot = "";
 			targets = (
 				CEF8CB1E1BFD995A00024E80 /* fun-lua */,
+				CEF8CB371BFD9CDE00024E80 /* test */,
 			);
 		};
 /* End PBXProject section */
@@ -118,7 +212,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CEF8CB231BFD995A00024E80 /* main.cpp in Sources */,
+				CEF8CCFF1BFDC6AC00024E80 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEF8CB341BFD9CDE00024E80 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEF8CB3B1BFD9CDE00024E80 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,6 +304,10 @@
 		CEF8CB271BFD995A00024E80 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs/rapidcheck",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -209,6 +315,50 @@
 		CEF8CB281BFD995A00024E80 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs/rapidcheck",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		CEF8CB3D1BFD9CDE00024E80 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(PROJECT_DIR)/libs/rapidcheck",
+					"$(PROJECT_DIR)/fun-lua",
+					"$(PROJECT_DIR)/fun-lua/parser",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs/rapidcheck",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CEF8CB3E1BFD9CDE00024E80 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(PROJECT_DIR)/libs/rapidcheck",
+					"$(PROJECT_DIR)/fun-lua",
+					"$(PROJECT_DIR)/fun-lua/parser",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs/rapidcheck",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -230,6 +380,14 @@
 			buildConfigurations = (
 				CEF8CB271BFD995A00024E80 /* Debug */,
 				CEF8CB281BFD995A00024E80 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		CEF8CB3C1BFD9CDE00024E80 /* Build configuration list for PBXNativeTarget "test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEF8CB3D1BFD9CDE00024E80 /* Debug */,
+				CEF8CB3E1BFD9CDE00024E80 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};

@@ -12,6 +12,8 @@
 #include <memory>
 
 namespace Parser {
+    
+    //stream for token parser
     class TexStream
     {
     public:

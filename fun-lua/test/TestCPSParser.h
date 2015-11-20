@@ -26,40 +26,41 @@ inline CPS::CPSType<char,std::string>::Result item(const  std::string& inp)
     }
 }
 
-inline CPS::CPSType<char,std::string>::Fun satParser(std::function<bool(char)> f)
+template<typename T>
+inline CPS::CPSType<T,std::string> satParser(std::function<bool(const T&)> f,const std::string& lable)
 {
-    auto funx = [f](char x)->typename CPS::CPSType<char,std::string>::Fun{
+    auto funx = [f](const T& x)->CPS::CPSType<T,std::string>{
         if (f(x)) {
-            return CPS::CPSType<char,std::string>::ret(x);
+            return CPS::CPSType<T,std::string>::ret(x);
         }
         else
         {
-            std::string msg = "parser ";
-            msg.push_back(x);
-            msg += "error";
-            
             return CPS::CPSType<char,std::string>::failure("");
         }
     };
-    return CPS::Bind<char,char,std::string>(item, funx);
+    return CPS::Bind<T,T,std::string>({item,lable}, funx);
 }
-inline CPS::CPSType<char,std::string>::Fun charParser(char c)
+inline CPS::CPSType<char,std::string> charParser(char c)
 {
-    return satParser([c](char x)->bool {return c == x;});
+    std::string lable = "parser ";
+    lable.push_back(c);
+    return satParser<char>([c](char x)->bool {return c == x;},lable);
 }
 
-inline CPS::CPSType<std::string, std::string>::Fun strParser(const std::string& str)
+inline CPS::CPSType<std::string, std::string> strParser(const std::string& str)
 {
     if (str.empty()) {
         return CPS::CPSType<std::string, std::string>::ret("");
     }
+    std::string lable = "parser ";
+    lable += str;
     auto x = charParser(str.front());
     auto xs = strParser(str.substr(1));
-    return CPS::Bind<char, std::string, std::string>(x, [ xs,str](const char&)->CPS::CPSType<std::string, std::string>::Fun {
-        return CPS::Bind<std::string, std::string, std::string>(xs,[str](const std::string&)->CPS::CPSType<std::string, std::string>::Fun{
+    return CPS::Bind<char, std::string, std::string>(x, [ xs,str](const char&)->CPS::CPSType<std::string, std::string> {
+        return CPS::Bind<std::string, std::string, std::string>(xs,[str](const std::string&)->CPS::CPSType<std::string, std::string>{
             return CPS::CPSType<std::string, std::string>::ret(str);
         });
-    });
+    },lable);
 }
 
 inline void TestCPSParser(){
@@ -78,9 +79,9 @@ inline void TestCPSParser(){
     
     //many item
     rc::check("many item",[](const std::string& msg){
-        auto p = CPS::Many<char, std::string>(item);
+        auto p = CPS::Many<char, std::string>({item,""});
         if (!msg.empty()) {
-            auto r = p(msg);
+            auto r = p.fun(msg);
             auto str = std::string(r->value().begin(),r->value().end());
             RC_ASSERT( str == msg);
             RC_ASSERT(r->remain() == "");
@@ -98,7 +99,7 @@ inline void TestCPSParser(){
     //string
     rc::check("string",[](const std::string& msg){
         auto p = strParser(msg);
-        auto r = p(msg);
+        auto r = p.fun(msg);
         RC_ASSERT( r->value() == msg);
         RC_ASSERT(r->remain() == "");
     });

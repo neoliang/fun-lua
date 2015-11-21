@@ -14,12 +14,13 @@
 #include <fstream>
 #include <iostream>
 using namespace std;
-
+void TestLex();
 
 int main() {
-
+    
     TestParserResult();
     TestCPSParser();
     TestStream();
+    TestLex();
     return 0;
 }

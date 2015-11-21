@@ -12,6 +12,13 @@
 		CEF8CCFF1BFDC6AC00024E80 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CCFA1BFDC6AC00024E80 /* main.cpp */; };
 		CEF8CD051BFDFD7700024E80 /* TexStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD031BFDFD7700024E80 /* TexStream.cpp */; };
 		CEF8CD061BFDFD7700024E80 /* TexStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD031BFDFD7700024E80 /* TexStream.cpp */; };
+		CEF8CD0A1BFF0A2F00024E80 /* TokenStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD081BFF0A2F00024E80 /* TokenStream.cpp */; };
+		CEF8CD0B1BFF0A2F00024E80 /* TokenStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD081BFF0A2F00024E80 /* TokenStream.cpp */; };
+		CEF8CD0E1BFF156E00024E80 /* Token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD0C1BFF156E00024E80 /* Token.cpp */; };
+		CEF8CD0F1BFF156E00024E80 /* Token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD0C1BFF156E00024E80 /* Token.cpp */; };
+		CEF8CD121BFF25DF00024E80 /* Lex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD101BFF25DF00024E80 /* Lex.cpp */; };
+		CEF8CD131BFF25DF00024E80 /* Lex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD101BFF25DF00024E80 /* Lex.cpp */; };
+		CEF8CD151BFF562F00024E80 /* TestLex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD141BFF562F00024E80 /* TestLex.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -48,6 +55,14 @@
 		CEF8CD031BFDFD7700024E80 /* TexStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TexStream.cpp; sourceTree = "<group>"; };
 		CEF8CD041BFDFD7700024E80 /* TexStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TexStream.h; sourceTree = "<group>"; };
 		CEF8CD071BFE026A00024E80 /* TestStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestStream.h; sourceTree = "<group>"; };
+		CEF8CD081BFF0A2F00024E80 /* TokenStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenStream.cpp; sourceTree = "<group>"; };
+		CEF8CD091BFF0A2F00024E80 /* TokenStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenStream.h; sourceTree = "<group>"; };
+		CEF8CD0C1BFF156E00024E80 /* Token.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Token.cpp; sourceTree = "<group>"; };
+		CEF8CD0D1BFF156E00024E80 /* Token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Token.h; sourceTree = "<group>"; };
+		CEF8CD101BFF25DF00024E80 /* Lex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lex.cpp; sourceTree = "<group>"; };
+		CEF8CD111BFF25DF00024E80 /* Lex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lex.h; sourceTree = "<group>"; };
+		CEF8CD141BFF562F00024E80 /* TestLex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestLex.cpp; sourceTree = "<group>"; };
+		CEF8CD161BFF56C800024E80 /* Util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +110,7 @@
 				CEF8CB471BFDB5A600024E80 /* TestParserResult.h */,
 				CEF8CC561BFDC27C00024E80 /* TestCPSParser.h */,
 				CEF8CD071BFE026A00024E80 /* TestStream.h */,
+				CEF8CD141BFF562F00024E80 /* TestLex.cpp */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -109,6 +125,7 @@
 				CEF8CCFE1BFDC6AC00024E80 /* vm */,
 				CEF8CD011BFDCC6B00024E80 /* CPS.h */,
 				CEF8CD021BFDCCA400024E80 /* CPSResult.h */,
+				CEF8CD161BFF56C800024E80 /* Util.h */,
 			);
 			path = "fun-lua";
 			sourceTree = "<group>";
@@ -132,6 +149,12 @@
 			children = (
 				CEF8CD031BFDFD7700024E80 /* TexStream.cpp */,
 				CEF8CD041BFDFD7700024E80 /* TexStream.h */,
+				CEF8CD081BFF0A2F00024E80 /* TokenStream.cpp */,
+				CEF8CD091BFF0A2F00024E80 /* TokenStream.h */,
+				CEF8CD0C1BFF156E00024E80 /* Token.cpp */,
+				CEF8CD0D1BFF156E00024E80 /* Token.h */,
+				CEF8CD101BFF25DF00024E80 /* Lex.cpp */,
+				CEF8CD111BFF25DF00024E80 /* Lex.h */,
 			);
 			path = parser;
 			sourceTree = "<group>";
@@ -220,8 +243,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEF8CD0A1BFF0A2F00024E80 /* TokenStream.cpp in Sources */,
 				CEF8CCFF1BFDC6AC00024E80 /* main.cpp in Sources */,
 				CEF8CD051BFDFD7700024E80 /* TexStream.cpp in Sources */,
+				CEF8CD0E1BFF156E00024E80 /* Token.cpp in Sources */,
+				CEF8CD121BFF25DF00024E80 /* Lex.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,8 +255,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEF8CD0B1BFF0A2F00024E80 /* TokenStream.cpp in Sources */,
 				CEF8CB3B1BFD9CDE00024E80 /* main.cpp in Sources */,
 				CEF8CD061BFDFD7700024E80 /* TexStream.cpp in Sources */,
+				CEF8CD151BFF562F00024E80 /* TestLex.cpp in Sources */,
+				CEF8CD0F1BFF156E00024E80 /* Token.cpp in Sources */,
+				CEF8CD131BFF25DF00024E80 /* Lex.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,6 +422,7 @@
 				CEF8CB281BFD995A00024E80 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CEF8CB3C1BFD9CDE00024E80 /* Build configuration list for PBXNativeTarget "test" */ = {
 			isa = XCConfigurationList;
@@ -400,6 +431,7 @@
 				CEF8CB3E1BFD9CDE00024E80 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

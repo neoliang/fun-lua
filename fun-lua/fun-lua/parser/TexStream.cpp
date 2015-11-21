@@ -12,7 +12,6 @@ namespace Parser{
     
     struct AutoFile{
         FILE* fp ;
-        
         AutoFile(FILE* f)
         :fp(f)
         {

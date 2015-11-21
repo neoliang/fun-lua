@@ -9,7 +9,8 @@
 #ifndef fun_lua_CPS_h
 #define fun_lua_CPS_h
 #include <string>
-
+#include <list>
+#include "CPSResult.h"
 namespace CPS {
     template<typename T,typename U>
     struct CPSType
@@ -51,7 +52,7 @@ namespace CPS {
     template<typename T1,typename T2,typename U>
     inline CPSType<T2,U> Bind(const CPSType<T1,U>& x,const std::function<CPSType<T2,U> (const T1&)>& y,const std::string& lable = "")
     {
-
+        
         return{
             [=](const U& inp)->typename CPSType<T2,U>::Result{
                 auto r = x.fun(inp);
@@ -66,7 +67,9 @@ namespace CPS {
             lable
         };
     }
-    
+#define CONS(rt,it,e1,r) return CPS::Bind<decltype(e1.fun(it()))::element_type::ElemntT,rt,it>(e1,[=](const decltype(e1.fun(it()))::element_type::ElemntT& r) ->CPS::CPSType<rt,it> {
+#define EndCONS })
+#define RET(e,it) return CPS::CPSType<decltype(e),it>::ret(e) 
     template<typename T,typename U>
     inline CPSType<T,U> ChooseN(const std::list<CPSType<T,U>>& ps,const std::string& lable="")
     {
@@ -133,6 +136,26 @@ namespace CPS {
                                                       });
         });
         
+    }
+    
+    template<typename T ,typename T2,typename U>
+    static CPSType<T2,U> fmap(CPSType<T,U>& x,const std::function<T2(const T& )>& f,const std::string& lable = "")
+    {
+        return{
+            [x,f,lable](const U& inp)->typename CPSType<T2,U>::Result{
+                auto r = x.fun(inp);
+                if(r->isNone())
+                {
+                    return None<T2, U>("fmap failed");
+                }
+                else
+                {
+                    auto nv = f(r->value());
+                    return Some(nv,r->remain());
+                }
+            },
+            lable
+        };
     }
     
 }

@@ -14,7 +14,6 @@
 #include <string>
 
 
-
 inline CPS::CPSType<char,std::string>::Result item(const  std::string& inp)
 {
     if (inp.empty()) {
@@ -35,7 +34,7 @@ inline CPS::CPSType<T,std::string> satParser(std::function<bool(const T&)> f,con
         }
         else
         {
-            return CPS::CPSType<char,std::string>::failure("");
+            return CPS::CPSType<T,std::string>::failure("");
         }
     };
     return CPS::Bind<T,T,std::string>({item,lable}, funx);
@@ -56,11 +55,17 @@ inline CPS::CPSType<std::string, std::string> strParser(const std::string& str)
     lable += str;
     auto x = charParser(str.front());
     auto xs = strParser(str.substr(1));
-    return CPS::Bind<char, std::string, std::string>(x, [ xs,str](const char&)->CPS::CPSType<std::string, std::string> {
-        return CPS::Bind<std::string, std::string, std::string>(xs,[str](const std::string&)->CPS::CPSType<std::string, std::string>{
-            return CPS::CPSType<std::string, std::string>::ret(str);
-        });
-    },lable);
+    CONS(std::string, std::string, x, _)
+    CONS(std::string, std::string, xs, _)
+    RET((std::string)str, std::string);
+     //return CPS::CPSType<std::string, std::string>::ret(str);
+    EndCONS;
+    EndCONS;
+//    return CPS::Bind<char, std::string, std::string>(x, [ xs,str](const char&)->CPS::CPSType<std::string, std::string> {
+//        return CPS::Bind<std::string, std::string, std::string>(xs,[str](const std::string&)->CPS::CPSType<std::string, std::string>{
+//            return CPS::CPSType<std::string, std::string>::ret(str);
+//        });
+//    },lable);
 }
 
 inline void TestCPSParser(){

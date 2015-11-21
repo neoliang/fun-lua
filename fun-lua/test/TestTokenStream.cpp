@@ -1,29 +1,16 @@
 //
-//  TestLex.cpp
+//  TestTokenStream.cpp
 //  fun-lua
 //
-//  Created by neo on 15-11-20.
+//  Created by neo on 15-11-21.
 //  Copyright (c) 2015年 user. All rights reserved.
 //
 
-#include "Lex.h"
+#include "TestTokenStream.h"
+#include "TokenStream.h"
 #include "rapidcheck.h"
-#include "Util.h"
-#include <vector>
-
-void TestLex(){
-    
-    rc::check("digits",[](const unsigned int& i){
-        auto str = util::TtoStr(i);
-        
-        auto r = Parser::numberParser().fun(Parser::TexStream::fromString(str));
-        RC_ASSERT( r->value().t == Parser::tk_number);
-        RC_ASSERT(r->value().value == str);
-        RC_ASSERT(r->remain()->empty());
-        
-    });
-    
-    //check identifer
+void TestTokenStream()
+{
     std::vector<std::string> keywords = {
         "and", "break", "do", "else", "elseif",
         "end", "false", "for", "function", "if",
@@ -39,15 +26,15 @@ void TestLex(){
             str += " ";
         }
         auto stream = Parser::TexStream::fromString(str);
+        auto tstream = Parser::TokenStream::create(stream);
+        
         std::vector<Parser::Token> tokens;
-        auto r = parserToken(stream);
-        tokens.push_back(r->value());
-        while (r->value().t != Parser::tk_eof) {
-            r = parserToken(r->remain());
-            tokens.push_back(r->value());
+        while (!tstream->empty()) {
+            tokens.push_back(tstream->get());
+            tstream = tstream->next();
         }
-        RC_ASSERT(tokens.size() == nks.size() * 2 + 1);
-        RC_ASSERT(tokens.back().t == Parser::tk_eof);
+
+        RC_ASSERT(tokens.size() == nks.size() * 2);
         for (unsigned int i =0; i<nks.size(); ++i) {
             auto idx = 2 * i;
             auto idx1 = idx + 1;
@@ -55,5 +42,5 @@ void TestLex(){
             RC_ASSERT(tokens[idx1].t == ' ');
         }
     }
-        
+    
 }

@@ -11,6 +11,7 @@
 #include "TestParserResult.h"
 #include "TestCPSParser.h"
 #include "TestStream.h"
+#include "TestTokenStream.h"
 #include <fstream>
 #include <iostream>
 using namespace std;
@@ -22,5 +23,6 @@ int main() {
     TestCPSParser();
     TestStream();
     TestLex();
+    TestTokenStream();
     return 0;
 }

@@ -94,6 +94,18 @@ namespace Parser{
         {
             return _currentCol;
         }
+        
+        virtual char lookAhead(unsigned int s)
+        {
+            if (_cpos + s >= _endPos) {
+                return  -1;
+            }
+            char c ;
+            fseek(_file->fp, _cpos+s, SEEK_SET);
+            fread(&c, sizeof(char), 1, _file->fp);
+            return c;
+        }
+        
         TexStream::PtrType next()const
         {
             auto temp = new FileStream(*this);
@@ -153,6 +165,13 @@ namespace Parser{
         unsigned int colNum()const
         {
             return _currentCol;
+        }
+        virtual char lookAhead(unsigned int s)
+        {
+            if (iter + s >= _stream->end()) {
+                return  -1;
+            }
+            return *(iter + s);
         }
         TexStream::PtrType next()const
         {

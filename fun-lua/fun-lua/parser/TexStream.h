@@ -23,6 +23,7 @@ namespace Parser {
         
         virtual bool empty()const = 0;
         virtual char get()const = 0;
+        virtual char lookAhead(unsigned int s) =0;
         virtual unsigned int lineNum()const = 0;
  
         virtual unsigned int colNum()const = 0;

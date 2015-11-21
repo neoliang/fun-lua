@@ -28,7 +28,7 @@ namespace Parser{
         }
     }
     
-    inline LexTypeChar satParser(std::function<bool(char)> f,const std::string& lable)
+    inline LexTypeChar satParser(std::function<bool(char)> f,const std::string& lable="")
     {
         auto funx = [f](char x)->LexTypeChar{
             if (f(x)) {
@@ -41,8 +41,10 @@ namespace Parser{
         };
         return CPS::Bind<char,char,TexStream::PtrType>({item,lable}, funx);
     }
-    
-    const LexType& digitParserFun();
+    const LexType& defaultParser();
+    const LexType& numberParser();
+    LexType::Result parserToken(const TexStream::PtrType& inp );
+    TokenType lookupKeyword(const std::string& keyword);
 }
 
 #endif /* defined(__fun_lua__Lex__) */

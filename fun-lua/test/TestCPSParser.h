@@ -59,8 +59,8 @@ inline CPS::CPSType<std::string, std::string> strParser(const std::string& str)
     CONS(std::string, std::string, xs, _)
     RET((std::string)str, std::string);
      //return CPS::CPSType<std::string, std::string>::ret(str);
-    EndCONS;
-    EndCONS;
+    ENDCONS;
+    ENDCONS;
 //    return CPS::Bind<char, std::string, std::string>(x, [ xs,str](const char&)->CPS::CPSType<std::string, std::string> {
 //        return CPS::Bind<std::string, std::string, std::string>(xs,[str](const std::string&)->CPS::CPSType<std::string, std::string>{
 //            return CPS::CPSType<std::string, std::string>::ret(str);

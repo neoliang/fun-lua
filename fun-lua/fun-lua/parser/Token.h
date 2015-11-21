@@ -17,6 +17,7 @@ namespace Parser {
         //keywords
         tk_and = 256,tk_not,tk_or,tk_local,tk_return,tk_function,tk_end,tk_do,tk_break,tk_if,tk_then,
         tk_else,tk_elseif,tk_false,tk_true,tk_nil,tk_for,tk_in,tk_repeat,tk_until,tk_while,
+        
         //operator
         tk_equal,
         tk_notequal,
@@ -28,11 +29,16 @@ namespace Parser {
         tk_number,
         tk_string,
         tk_identifier,
+        tk_eof,
     };
     struct Token
     {
         int t;
         std::string value;
+        
+        Token(){}
+        Token(int vt,const std::string& v="")
+        :t(vt),value(v){};
     };
 }
 

@@ -67,21 +67,24 @@ namespace CPS {
             lable
         };
     }
+#define CONSF(rt,it,e1,r) CPS::Bind<decltype(e1.fun(it()))::element_type::ElemntT,rt,it>(e1,[=](const decltype(e1.fun(it()))::element_type::ElemntT& r) ->CPS::CPSType<rt,it> {
 #define CONS(rt,it,e1,r) return CPS::Bind<decltype(e1.fun(it()))::element_type::ElemntT,rt,it>(e1,[=](const decltype(e1.fun(it()))::element_type::ElemntT& r) ->CPS::CPSType<rt,it> {
-#define EndCONS })
-#define RET(e,it) return CPS::CPSType<decltype(e),it>::ret(e) 
+
+#define RETF(e,it) CPS::CPSType<decltype(e),it>::ret(e)
+#define RET(e,it) return CPS::CPSType<decltype(e),it>::ret(e)
+#define ENDCONS })
     template<typename T,typename U>
     inline CPSType<T,U> ChooseN(const std::list<CPSType<T,U>>& ps,const std::string& lable="")
     {
         return {
             [=](const U& inp)->typename CPSType<T,U>::Result{
                 for (auto iter = ps.begin(); iter != ps.end(); ++iter) {
-                    auto r = (*iter)(inp);
+                    auto r = (*iter).fun(inp);
                     if (!r->isNone()) {
                         return r;
                     }
                 }
-                return CPSResult<T,U>::None("choose error");
+                return None<T,U>("choose error");
             },
             lable
         };

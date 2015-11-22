@@ -13,29 +13,65 @@
 #include "KeywordsHelper.h"
 void TestLex(){
     
-//    rc::check("digits",[](const unsigned int& i){
-//        auto str = util::TtoStr(i);
-//        
-//        auto r = Parser::numberParser().fun(Parser::TexStream::fromString(str));
-//        RC_ASSERT( r->value().t == Parser::tk_number);
-//        RC_ASSERT(r->value().value == str);
-//        RC_ASSERT(r->remain()->empty());
-//        
-//    });
     //test HexnumberParser
-    rc::check("posHexnumberParser",[](const unsigned int& i,const unsigned int& d){
-        std::string hexStr = "0x";
+    rc::check("HexnumberParser",[](const unsigned int& i,const unsigned int& d,const bool& sign){
+        const bool hex =true;
+        std::string hexStr;
+        int base = 10;
+        if (hex) {
+            hexStr = "0x";
+            base = 16;
+        }
         if (i != 0 ) {
-             hexStr += util::TtoStr(i,16);
+             hexStr += util::TtoStr(i,base);
         }
         std::string digit;
         if (d != 0) {
             hexStr += ".";
-            hexStr += util::TtoStr(d,16);
+            hexStr += util::TtoStr(d,base);
+        }
+        if (sign) {
+            hexStr = "-" + hexStr;
+        }
+        if (hexStr == "") {
+            return ;
         }
         auto stream = Parser::TexStream::fromString(hexStr);
-        auto r = Parser::posHexnumberParser().fun(stream);
-        if (i == 0 && d == 0) {
+        auto r = Parser::numberParser().fun(stream);
+        if (i == 0 && d == 0 ) {
+            RC_ASSERT(r->isNone());
+        }
+        else{
+            RC_ASSERT(!r->isNone());
+            RC_ASSERT(r->value().value == hexStr);
+        }
+    });
+    
+    rc::check("numberParser",[](const unsigned int& i,const unsigned int& d,const bool& sign){
+        const bool hex =false;
+        std::string hexStr;
+        int base = 10;
+        if (hex) {
+            hexStr = "0x";
+            base = 16;
+        }
+        if (i != 0 ) {
+            hexStr += util::TtoStr(i,base);
+        }
+        std::string digit;
+        if (d != 0) {
+            hexStr += ".";
+            hexStr += util::TtoStr(d,base);
+        }
+        if (sign) {
+            hexStr = "-" + hexStr;
+        }
+        if (hexStr == "") {
+            return ;
+        }
+        auto stream = Parser::TexStream::fromString(hexStr);
+        auto r = Parser::numberParser().fun(stream);
+        if (i == 0 && d == 0 ) {
             RC_ASSERT(r->isNone());
         }
         else{

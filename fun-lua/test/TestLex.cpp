@@ -10,18 +10,40 @@
 #include "rapidcheck.h"
 #include "Util.h"
 #include <vector>
-
+#include "KeywordsHelper.h"
 void TestLex(){
     
-    rc::check("digits",[](const unsigned int& i){
-        auto str = util::TtoStr(i);
-        
-        auto r = Parser::numberParser().fun(Parser::TexStream::fromString(str));
-        RC_ASSERT( r->value().t == Parser::tk_number);
-        RC_ASSERT(r->value().value == str);
-        RC_ASSERT(r->remain()->empty());
-        
+//    rc::check("digits",[](const unsigned int& i){
+//        auto str = util::TtoStr(i);
+//        
+//        auto r = Parser::numberParser().fun(Parser::TexStream::fromString(str));
+//        RC_ASSERT( r->value().t == Parser::tk_number);
+//        RC_ASSERT(r->value().value == str);
+//        RC_ASSERT(r->remain()->empty());
+//        
+//    });
+    //test HexnumberParser
+    rc::check("posHexnumberParser",[](const unsigned int& i,const unsigned int& d){
+        std::string hexStr = "0x";
+        if (i != 0 ) {
+             hexStr += util::TtoStr(i,16);
+        }
+        std::string digit;
+        if (d != 0) {
+            hexStr += ".";
+            hexStr += util::TtoStr(d,16);
+        }
+        auto stream = Parser::TexStream::fromString(hexStr);
+        auto r = Parser::posHexnumberParser().fun(stream);
+        if (i == 0 && d == 0) {
+            RC_ASSERT(r->isNone());
+        }
+        else{
+            RC_ASSERT(!r->isNone());
+            RC_ASSERT(r->value().value == hexStr);
+        }
     });
+    
     
     //check identifer
     std::vector<std::string> keywords = {

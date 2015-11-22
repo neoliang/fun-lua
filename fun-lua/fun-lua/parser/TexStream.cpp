@@ -106,10 +106,13 @@ namespace Parser{
             return c;
         }
         
-        TexStream::PtrType next()const
+        TexStream::PtrType next(unsigned int i =1)const
         {
             auto temp = new FileStream(*this);
-            temp->moveToNext();
+            while (i >0) {
+                temp->moveToNext();
+                --i;
+            }
             return PtrType(temp);
         }
     };
@@ -173,10 +176,14 @@ namespace Parser{
             }
             return *(iter + s);
         }
-        TexStream::PtrType next()const
+        TexStream::PtrType next(unsigned int i = 1)const
         {
             auto temp = new StringStream(*this);
-            temp->moveToNext();
+            while (i > 0) {
+                temp->moveToNext();
+                --i;
+            }
+            
             return PtrType(temp);
         }
     };

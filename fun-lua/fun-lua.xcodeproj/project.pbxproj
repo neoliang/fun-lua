@@ -20,6 +20,8 @@
 		CEF8CD151BFF562F00024E80 /* TestLex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD141BFF562F00024E80 /* TestLex.cpp */; };
 		CEF8CD171C00412400024E80 /* Lex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD101BFF25DF00024E80 /* Lex.cpp */; };
 		CEF8CD1A1C00896A00024E80 /* TestTokenStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD181C00896A00024E80 /* TestTokenStream.cpp */; };
+		CEF8CD1D1C01903F00024E80 /* KeywordsHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD1B1C01903F00024E80 /* KeywordsHelper.cpp */; };
+		CEF8CD1E1C01903F00024E80 /* KeywordsHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF8CD1B1C01903F00024E80 /* KeywordsHelper.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -66,6 +68,8 @@
 		CEF8CD161BFF56C800024E80 /* Util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
 		CEF8CD181C00896A00024E80 /* TestTokenStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestTokenStream.cpp; sourceTree = "<group>"; };
 		CEF8CD191C00896A00024E80 /* TestTokenStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestTokenStream.h; sourceTree = "<group>"; };
+		CEF8CD1B1C01903F00024E80 /* KeywordsHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeywordsHelper.cpp; sourceTree = "<group>"; };
+		CEF8CD1C1C01903F00024E80 /* KeywordsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeywordsHelper.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +164,8 @@
 				CEF8CD0D1BFF156E00024E80 /* Token.h */,
 				CEF8CD101BFF25DF00024E80 /* Lex.cpp */,
 				CEF8CD111BFF25DF00024E80 /* Lex.h */,
+				CEF8CD1B1C01903F00024E80 /* KeywordsHelper.cpp */,
+				CEF8CD1C1C01903F00024E80 /* KeywordsHelper.h */,
 			);
 			path = parser;
 			sourceTree = "<group>";
@@ -251,6 +257,7 @@
 				CEF8CD0A1BFF0A2F00024E80 /* TokenStream.cpp in Sources */,
 				CEF8CCFF1BFDC6AC00024E80 /* main.cpp in Sources */,
 				CEF8CD051BFDFD7700024E80 /* TexStream.cpp in Sources */,
+				CEF8CD1D1C01903F00024E80 /* KeywordsHelper.cpp in Sources */,
 				CEF8CD0E1BFF156E00024E80 /* Token.cpp in Sources */,
 				CEF8CD121BFF25DF00024E80 /* Lex.cpp in Sources */,
 			);
@@ -263,6 +270,7 @@
 				CEF8CD0B1BFF0A2F00024E80 /* TokenStream.cpp in Sources */,
 				CEF8CB3B1BFD9CDE00024E80 /* main.cpp in Sources */,
 				CEF8CD061BFDFD7700024E80 /* TexStream.cpp in Sources */,
+				CEF8CD1E1C01903F00024E80 /* KeywordsHelper.cpp in Sources */,
 				CEF8CD171C00412400024E80 /* Lex.cpp in Sources */,
 				CEF8CD1A1C00896A00024E80 /* TestTokenStream.cpp in Sources */,
 				CEF8CD151BFF562F00024E80 /* TestLex.cpp in Sources */,

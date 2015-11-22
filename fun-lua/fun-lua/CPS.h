@@ -149,7 +149,7 @@ namespace CPS {
                 auto r = x.fun(inp);
                 if(r->isNone())
                 {
-                    return None<T2, U>("fmap failed");
+                    return None<T2, U>(r->errorMsg());
                 }
                 else
                 {

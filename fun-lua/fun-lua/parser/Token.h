@@ -13,6 +13,7 @@
 namespace Parser {
     enum TokenType
     {
+        tk_invalid = -1,
         //0 ~ 255 single char
         //keywords
         tk_and = 256,tk_not,tk_or,tk_local,tk_return,tk_function,tk_end,tk_do,tk_break,tk_if,tk_then,

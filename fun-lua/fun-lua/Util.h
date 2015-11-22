@@ -13,15 +13,16 @@
 #include <iomanip>
 #include <stdlib.h>
 #include <sstream>
+#include <iostream>
 namespace util {
     
     template<class T>
-    inline std::string TtoStr(T v)
+    inline std::string TtoStr(T v,int base = 10)
     {
         
         std::stringstream TToStr;
         std::string tempStr;
-        TToStr << v;
+        TToStr << std::setbase(base) << v;
         TToStr >> tempStr;
         return tempStr;
     }

@@ -24,5 +24,8 @@ int main() {
     TestStream();
     TestLex();
     TestTokenStream();
+    const char* s = "0x";
+    auto f = atof(s);
+    cout << f << endl;
     return 0;
 }

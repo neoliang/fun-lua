@@ -27,7 +27,7 @@ namespace Parser {
         virtual unsigned int lineNum()const = 0;
  
         virtual unsigned int colNum()const = 0;
-        virtual PtrType next()const = 0;
+        virtual PtrType next(unsigned int i =1)const = 0;
         
     public:
         static PtrType fromFile(const std::string& file);

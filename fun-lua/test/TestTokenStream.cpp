@@ -9,6 +9,7 @@
 #include "TestTokenStream.h"
 #include "TokenStream.h"
 #include "rapidcheck.h"
+#include "KeywordsHelper.h"
 void TestTokenStream()
 {
     std::vector<std::string> keywords = {

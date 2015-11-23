@@ -8,7 +8,7 @@
 
 #include "Lex.h"
 #include "KeywordsHelper.h"
-
+#include "Util.h"
 namespace Parser{
     
 #define CONSL(e1,r) CONS(Token,TexStream::PtrType ,e1,r)
@@ -49,49 +49,188 @@ namespace Parser{
     {
         return satParser([c](char i){return c == i;});
     }
-    
-    const LexType& whiteSpaceParser()
-    {
-        static auto white = satParser([](char c){
-           return c == ' ' || c == '\t';
-        });
-        static auto whiteToken = CPS::fmap<char,Token,TexStream::PtrType>(white, [](char c)->Token{
-            Token t;
-            t.t = c;
-            return t;
-        });
-        return whiteToken;
+#define None(errMsg) CPS::None<Token, TexStream::PtrType>(errMsg)
+    LexType::Result paserString (const TexStream::PtrType& inp) {
+        char del = inp->get();
+        unsigned int current = 1;
+        
+        char cChar = inp->lookAhead(current);
+        while (cChar != del) {
+            switch (cChar) {
+                case -1:
+                    None("unfinished string");
+                    break;  /* to avoid warnings */
+                case '\n':
+                case '\r':
+                    None("unfinished string");
+                    break;  /* to avoid warnings */
+                case '\\': {  /* escape sequences */
+                    ++ current;
+                    int c = inp->lookAhead(current);  /* final character to be saved */
+                    switch (c) {
+                        case 'a': c = '\a'; goto read_save;
+                        case 'b': c = '\b'; goto read_save;
+                        case 'f': c = '\f'; goto read_save;
+                        case 'n': c = '\n'; goto read_save;
+                        case 'r': c = '\r'; goto read_save;
+                        case 't': c = '\t'; goto read_save;
+                        case 'v': c = '\v'; goto read_save;
+                        case 'x': c = readhexaesc(ls); goto read_save;
+                        case '\\': case '\"': case '\'':
+                            c = ls->current; goto read_save;
+                        case EOZ: goto no_save;  /* will raise an error next loop */
+                        case 'z': {  /* zap following span of spaces */
+                            next(ls);  /* skip the 'z' */
+                            while (lisspace(ls->current)) {
+                                if (currIsNewline(ls)) inclinenumber(ls);
+                                else next(ls);
+                            }
+                            goto no_save;
+                        }
+                        default: {
+                            if (!lisdigit(ls->current))
+                                escerror(ls, &ls->current, 1, "invalid escape sequence");
+                            /* digital escape \ddd */
+                            c = readdecesc(ls);
+                            goto only_save;
+                        }
+                    }
+                read_save: next(ls);  /* read next character */
+                only_save: save(ls, c);  /* save 'c' */
+                no_save: break;
+                }
+                default:
+                    save_and_next(ls);
+            }
+        }
+        save_and_next(ls);  /* skip delimiter */
+        seminfo->ts = luaX_newstring(ls, luaZ_buffer(ls->buff) + 1,
+                                     luaZ_bufflen(ls->buff) - 2);
     }
-    const LexType& EOFPaser()
+    std::string createErroMsg(const TexStream::PtrType& inp)
     {
-        static LexType eof = {
-            [](const  TexStream::PtrType& inp)->LexType::Result
-            {
-                if (inp->empty()) {
-                    return CPS::Some<Token,TexStream::PtrType>(Token(tk_eof),inp);
+        std::string errorMsg = "in line";
+        errorMsg +=  util::TtoStr(inp->lineNum());
+        errorMsg += " col";
+        errorMsg += util::TtoStr(inp->colNum());
+        return errorMsg;
+    }
+    int processComment(const TexStream::PtrType& inp)
+    {
+        //long comment
+        if (inp->lookAhead(2) == '[' && inp->lookAhead(3) == '[') {
+            unsigned int start = 4;
+            char nc = inp->lookAhead(start);
+            while (nc != -1) {
+                
+                if (nc == ']' && inp->lookAhead(start+1) == ']') {
+                    ++start;
+                    break;
+                }
+                ++start;
+                nc = inp->lookAhead(start);
+            }
+            if (nc == -1) {
+                return -1;
+            }
+
+            return start+1;
+        }
+        else
+        {
+            unsigned int start = 2;
+            char nc = inp->lookAhead(start);
+            while (nc != -1) {
+                
+                if (nc == '\n') {
+                    break;
+                }
+                ++start;
+                nc = inp->lookAhead(start);
+            }
+            if (nc == -1) {
+                return -1;
+            }
+            return start + 1;
+        }
+    }
+#define SomeT(t,ninp) CPS::Some<Token,TexStream::PtrType>(t,ninp)
+    LexType::Result parserToken(const TexStream::PtrType& inp )
+    {
+        if (inp->empty()) {
+            return CPS::Some<Token,TexStream::PtrType>(Token(tk_eof),inp);
+        }
+        const char c = inp->get();
+        if (isnumber(c)) {
+            return numberParser().fun(inp);
+        }
+        else if (c == '=' && inp->lookAhead(1) == '=')
+        {
+            return SomeT(Token(tk_equal),inp->next(2));
+        }
+        else if (c == '_' or isalpha(c))
+        {
+            return identifierParser().fun(inp);
+        }
+        else if (c == '~' && inp->lookAhead(1) == '=')
+        {
+            return SomeT(Token(tk_notequal),inp->next(2));
+        }
+        else if (c == '<' && inp->lookAhead(1) == '=')
+        {
+            return SomeT(Token(tk_le),inp->next(2));
+        }
+        else if (c == '>' && inp->lookAhead(1) == '=')
+        {
+            return SomeT(Token(tk_ge),inp->next(2));
+        }
+        else if (c == '.')
+        {
+            char l1 = inp->lookAhead(1);
+            char l2 = inp->lookAhead(2);
+            if ( l1 == '.') {
+                if (l2 == '.') {
+                    return SomeT(Token(tk_3dots),inp->next(3));
                 }
                 else
                 {
-                    return  CPS::None<Token,TexStream::PtrType>("not end of file");
+                    return SomeT(Token(tk_concat), inp->next(2));
                 }
-            },
-            ""
-        };
-        return eof;
-    }
-    LexType::Result parserToken(const TexStream::PtrType& inp )
-    {
-        static auto p = CPS::ChooseN<Token,TexStream::PtrType>({identifierParser(),whiteSpaceParser(),EOFPaser()});
-        return p.fun(inp);
+            }
+            else if(isnumber(l1))
+            {
+                return numberParser().fun(inp);
+            }
+            else
+            {
+                return SomeT(Token('.'),inp->next());
+            }
+        }
+        else if (c == '-' && inp->lookAhead(1) == '-') //ignore comment
+        {
+            int offset = processComment(inp);
+            if (offset == -1) {
+                std::string errMsg = "unexpected comment " + createErroMsg(inp);
+                return CPS::None<Token, TexStream::PtrType>(errMsg);
+            }
+            else
+            {
+                return parserToken(inp->next(offset));
+            }
+        }
+        else//default
+        {
+            return CPS::Some<Token,TexStream::PtrType>(Token(c),inp->next());
+        }
     }
     
     const LexType& identifierParser()
     {
         static auto firstChar = satParser([](char c){
-            return c == '_' || isalnum(c);
+            return c == '_' || isalpha(c);
         });
         static auto otherChars = CPS::Many(satParser([](char c){
-            return isalnum(c);
+            return isalnum(c) || c == '_';
         }));
         
         static auto idP = CONSLF(firstChar, c)
@@ -114,15 +253,6 @@ namespace Parser{
         ENDCONS;
         idP.label = "identifer";
         return idP;
-    }
-    const LexType& defaultParser()
-    {
-        static LexTypeChar itemP = {item};
-        static auto d = CONSLF(itemP, ch)
-        Token t((int)ch);
-        RETL(t);
-        ENDCONS;
-        return d;
     }
     
 
@@ -203,22 +333,6 @@ namespace Parser{
         ENDCONS;
         return preFixAllHexp;
     }
-//    CONSLF(optionSign, s)
-//    CONSL(posNumber, nt)
-//    if (s == '-' ) {
-//        Token nnt;
-//        nnt.t = tk_number;
-//        nnt.value = "-";
-//        nnt.value += nt.value;
-//        RETL(nnt);
-//    }
-//    else
-//    {
-//        RETL((Token)nt);
-//    }
-//    ENDCONS;
-//    ENDCONS;
-
     
     const LexType& numberParser()
     {

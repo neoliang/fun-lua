@@ -12,6 +12,16 @@
 #include "KeywordsHelper.h"
 void TestTokenStream()
 {
+    
+    auto fstream = Parser::TexStream::fromFile("/tmp/test.lua");
+    auto tstream = Parser::TokenStream::create(fstream);
+    std::vector<Parser::Token> alltokens;
+    while (!tstream->empty()) {
+        alltokens.push_back(tstream->get());
+        tstream = tstream->next();
+    }
+    
+    
     std::vector<std::string> keywords = {
         "and", "break", "do", "else", "elseif",
         "end", "false", "for", "function", "if",
@@ -44,4 +54,5 @@ void TestTokenStream()
         }
     }
     
+
 }

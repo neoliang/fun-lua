@@ -113,5 +113,8 @@ void TestLex(){
             RC_ASSERT(tokens[idx1].t == ' ');
         }
     }
+    
+    //check all parser
+    
         
 }

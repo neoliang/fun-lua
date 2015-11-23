@@ -13,7 +13,7 @@
 #include <iostream>
 inline void TestFileStream()
 {
-    FILE *fp = fopen("/tmp/test.txt", "r");
+    FILE *fp = fopen("/tmp/test.lua", "r");
     fseek(fp,0,SEEK_END);
     long s = ftell(fp);
     fseek(fp,0,SEEK_SET);
@@ -22,7 +22,7 @@ inline void TestFileStream()
     fclose(fp);
     std::string str(pBuffer,pBuffer +s);
     
-    auto fstream = Parser::TexStream::fromFile("/tmp/test.txt");
+    auto fstream = Parser::TexStream::fromFile("/tmp/test.lua");
     std::string str1;
     while (!fstream->empty()) {
         str1.push_back(fstream->get());

@@ -19,13 +19,10 @@ void TestLex();
 
 int main() {
     
-//    TestParserResult();
-//    TestCPSParser();
-//    TestStream();
+    TestParserResult();
+    TestCPSParser();
+    TestStream();
     TestLex();
-    //TestTokenStream();
-    const char* s = "0x";
-    auto f = atof(s);
-    cout << f << endl;
+    TestTokenStream();
     return 0;
 }

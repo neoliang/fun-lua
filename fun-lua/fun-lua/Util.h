@@ -17,7 +17,26 @@
 namespace util {
     
     template<class T>
-    inline std::string TtoStr(T v,int base = 10)
+    inline std::string TtoStr(T v)
+    {
+        
+        std::stringstream TToStr;
+        std::string tempStr;
+        TToStr << v;
+        TToStr >> tempStr;
+        return tempStr;
+    }
+    
+    inline std::string TtoStr(int v,int base = 10)
+    {
+        
+        std::stringstream TToStr;
+        std::string tempStr;
+        TToStr << std::setbase(base) << v;
+        TToStr >> tempStr;
+        return tempStr;
+    }
+    inline std::string TtoStr(unsigned int v,int base = 10)
     {
         
         std::stringstream TToStr;

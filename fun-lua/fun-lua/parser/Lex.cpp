@@ -18,8 +18,7 @@ namespace Parser{
     
     const LexType& defaultParser();
 
-    const LexType& identifierParser();
-    
+    LexType::Result idp(const TexStream::PtrType& inp);
     
     inline LexTypeChar::Result item(const  TexStream::PtrType& inp)
     {
@@ -50,63 +49,63 @@ namespace Parser{
         return satParser([c](char i){return c == i;});
     }
 #define None(errMsg) CPS::None<Token, TexStream::PtrType>(errMsg)
-    LexType::Result paserString (const TexStream::PtrType& inp) {
-        char del = inp->get();
-        unsigned int current = 1;
-        
-        char cChar = inp->lookAhead(current);
-        while (cChar != del) {
-            switch (cChar) {
-                case -1:
-                    None("unfinished string");
-                    break;  /* to avoid warnings */
-                case '\n':
-                case '\r':
-                    None("unfinished string");
-                    break;  /* to avoid warnings */
-                case '\\': {  /* escape sequences */
-                    ++ current;
-                    int c = inp->lookAhead(current);  /* final character to be saved */
-                    switch (c) {
-                        case 'a': c = '\a'; goto read_save;
-                        case 'b': c = '\b'; goto read_save;
-                        case 'f': c = '\f'; goto read_save;
-                        case 'n': c = '\n'; goto read_save;
-                        case 'r': c = '\r'; goto read_save;
-                        case 't': c = '\t'; goto read_save;
-                        case 'v': c = '\v'; goto read_save;
-                        case 'x': c = readhexaesc(ls); goto read_save;
-                        case '\\': case '\"': case '\'':
-                            c = ls->current; goto read_save;
-                        case EOZ: goto no_save;  /* will raise an error next loop */
-                        case 'z': {  /* zap following span of spaces */
-                            next(ls);  /* skip the 'z' */
-                            while (lisspace(ls->current)) {
-                                if (currIsNewline(ls)) inclinenumber(ls);
-                                else next(ls);
-                            }
-                            goto no_save;
-                        }
-                        default: {
-                            if (!lisdigit(ls->current))
-                                escerror(ls, &ls->current, 1, "invalid escape sequence");
-                            /* digital escape \ddd */
-                            c = readdecesc(ls);
-                            goto only_save;
-                        }
-                    }
-                read_save: next(ls);  /* read next character */
-                only_save: save(ls, c);  /* save 'c' */
-                no_save: break;
-                }
-                default:
-                    save_and_next(ls);
-            }
-        }
-        save_and_next(ls);  /* skip delimiter */
-        seminfo->ts = luaX_newstring(ls, luaZ_buffer(ls->buff) + 1,
-                                     luaZ_bufflen(ls->buff) - 2);
-    }
+//    LexType::Result paserString (const TexStream::PtrType& inp) {
+//        char del = inp->get();
+//        unsigned int current = 1;
+//        
+//        char cChar = inp->lookAhead(current);
+//        while (cChar != del) {
+//            switch (cChar) {
+//                case -1:
+//                    None("unfinished string");
+//                    break;  /* to avoid warnings */
+//                case '\n':
+//                case '\r':
+//                    None("unfinished string");
+//                    break;  /* to avoid warnings */
+//                case '\\': {  /* escape sequences */
+//                    ++ current;
+//                    int c = inp->lookAhead(current);  /* final character to be saved */
+//                    switch (c) {
+//                        case 'a': c = '\a'; goto read_save;
+//                        case 'b': c = '\b'; goto read_save;
+//                        case 'f': c = '\f'; goto read_save;
+//                        case 'n': c = '\n'; goto read_save;
+//                        case 'r': c = '\r'; goto read_save;
+//                        case 't': c = '\t'; goto read_save;
+//                        case 'v': c = '\v'; goto read_save;
+//                        case 'x': c = readhexaesc(ls); goto read_save;
+//                        case '\\': case '\"': case '\'':
+//                            c = ls->current; goto read_save;
+//                        case EOZ: goto no_save;  /* will raise an error next loop */
+//                        case 'z': {  /* zap following span of spaces */
+//                            next(ls);  /* skip the 'z' */
+//                            while (lisspace(ls->current)) {
+//                                if (currIsNewline(ls)) inclinenumber(ls);
+//                                else next(ls);
+//                            }
+//                            goto no_save;
+//                        }
+//                        default: {
+//                            if (!lisdigit(ls->current))
+//                                escerror(ls, &ls->current, 1, "invalid escape sequence");
+//                            /* digital escape \ddd */
+//                            c = readdecesc(ls);
+//                            goto only_save;
+//                        }
+//                    }
+//                read_save: next(ls);  /* read next character */
+//                only_save: save(ls, c);  /* save 'c' */
+//                no_save: break;
+//                }
+//                default:
+//                    save_and_next(ls);
+//            }
+//        }
+//        save_and_next(ls);  /* skip delimiter */
+//        seminfo->ts = luaX_newstring(ls, luaZ_buffer(ls->buff) + 1,
+//                                     luaZ_bufflen(ls->buff) - 2);
+//    }
     std::string createErroMsg(const TexStream::PtrType& inp)
     {
         std::string errorMsg = "in line";
@@ -170,7 +169,7 @@ namespace Parser{
         }
         else if (c == '_' or isalpha(c))
         {
-            return identifierParser().fun(inp);
+            return idp(inp);
         }
         else if (c == '~' && inp->lookAhead(1) == '=')
         {
@@ -223,38 +222,27 @@ namespace Parser{
             return CPS::Some<Token,TexStream::PtrType>(Token(c),inp->next());
         }
     }
-    
-    const LexType& identifierParser()
+    LexType::Result idp(const TexStream::PtrType& inp)
     {
-        static auto firstChar = satParser([](char c){
-            return c == '_' || isalpha(c);
-        });
-        static auto otherChars = CPS::Many(satParser([](char c){
-            return isalnum(c) || c == '_';
-        }));
-        
-        static auto idP = CONSLF(firstChar, c)
-        CONSL(otherChars, cs)
         std::string id;
-        id.push_back(c);
-        id.insert(id.end(), cs.begin(), cs.end());
-        Token t;
+        id.push_back(inp->get());
+        unsigned int i = 1;
+        char nc = inp->lookAhead(i);
+        while (nc == '_' || isalnum(nc)) {
+            id.push_back(nc);
+            ++i;
+            nc = inp->lookAhead(i);
+        }
         auto keyWordT = lookupKeyword(id);
         if(keyWordT != tk_invalid) {
-            t.t = keyWordT;
+            return SomeT(Token(keyWordT), inp->next(i));
         }
         else
         {
-            t.t = tk_identifier;
-            t.value = id;
+            return SomeT(Token(tk_identifier,id), inp->next(i));
         }
-        RETL(t);
-        ENDCONS;
-        ENDCONS;
-        idP.label = "identifer";
-        return idP;
+        
     }
-    
 
     const CPS::CPSType<std::string, TexStream::PtrType>& numberParser(std::function<bool(char)> pred)
     {

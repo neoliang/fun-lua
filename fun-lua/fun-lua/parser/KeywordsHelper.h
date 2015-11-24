@@ -11,6 +11,7 @@
 #include "Token.h"
 
 namespace Parser {
+    std::string lookupTokenString(TokenType t);
     TokenType lookupKeyword(const std::string& keyword);
 }
 

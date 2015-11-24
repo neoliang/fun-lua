@@ -11,11 +11,27 @@
 #include "Util.h"
 namespace Parser{
     
+    int hexavalue (char c) {
+        if (isnumber(c)) return c - '0';
+        else return tolower(c) - 'a' + 10;
+    }
+    
 #define CONSL(e1,r) CONS(Token,TexStream::PtrType ,e1,r)
 #define CONSLF(e1,r) CONSF(Token,TexStream::PtrType ,e1,r)
 #define RETL(e) RET(e,TexStream::PtrType)
 #define RETLF(e) RETF(e,TexStream::PtrType)
     
+#define None(errMsg) CPS::None<Token, TexStream::PtrType>(errMsg)
+#define SomeT(t,ninp) CPS::Some<Token,TexStream::PtrType>(t,ninp)
+    
+    std::string createErroMsg(const TexStream::PtrType& inp)
+    {
+        std::string errorMsg = "in line";
+        errorMsg +=  util::TtoStr(inp->lineNum());
+        errorMsg += " col";
+        errorMsg += util::TtoStr(inp->colNum());
+        return errorMsg;
+    }
     const LexType& defaultParser();
 
     LexType::Result idp(const TexStream::PtrType& inp);
@@ -48,72 +64,80 @@ namespace Parser{
     {
         return satParser([c](char i){return c == i;});
     }
-#define None(errMsg) CPS::None<Token, TexStream::PtrType>(errMsg)
-//    LexType::Result paserString (const TexStream::PtrType& inp) {
-//        char del = inp->get();
-//        unsigned int current = 1;
-//        
-//        char cChar = inp->lookAhead(current);
-//        while (cChar != del) {
-//            switch (cChar) {
-//                case -1:
-//                    None("unfinished string");
-//                    break;  /* to avoid warnings */
-//                case '\n':
-//                case '\r':
-//                    None("unfinished string");
-//                    break;  /* to avoid warnings */
-//                case '\\': {  /* escape sequences */
-//                    ++ current;
-//                    int c = inp->lookAhead(current);  /* final character to be saved */
-//                    switch (c) {
-//                        case 'a': c = '\a'; goto read_save;
-//                        case 'b': c = '\b'; goto read_save;
-//                        case 'f': c = '\f'; goto read_save;
-//                        case 'n': c = '\n'; goto read_save;
-//                        case 'r': c = '\r'; goto read_save;
-//                        case 't': c = '\t'; goto read_save;
-//                        case 'v': c = '\v'; goto read_save;
-//                        case 'x': c = readhexaesc(ls); goto read_save;
-//                        case '\\': case '\"': case '\'':
-//                            c = ls->current; goto read_save;
-//                        case EOZ: goto no_save;  /* will raise an error next loop */
-//                        case 'z': {  /* zap following span of spaces */
-//                            next(ls);  /* skip the 'z' */
-//                            while (lisspace(ls->current)) {
-//                                if (currIsNewline(ls)) inclinenumber(ls);
-//                                else next(ls);
-//                            }
-//                            goto no_save;
-//                        }
-//                        default: {
-//                            if (!lisdigit(ls->current))
-//                                escerror(ls, &ls->current, 1, "invalid escape sequence");
-//                            /* digital escape \ddd */
-//                            c = readdecesc(ls);
-//                            goto only_save;
-//                        }
-//                    }
-//                read_save: next(ls);  /* read next character */
-//                only_save: save(ls, c);  /* save 'c' */
-//                no_save: break;
-//                }
-//                default:
-//                    save_and_next(ls);
-//            }
-//        }
-//        save_and_next(ls);  /* skip delimiter */
-//        seminfo->ts = luaX_newstring(ls, luaZ_buffer(ls->buff) + 1,
-//                                     luaZ_bufflen(ls->buff) - 2);
-//    }
-    std::string createErroMsg(const TexStream::PtrType& inp)
+    bool isSpace(char c)
     {
-        std::string errorMsg = "in line";
-        errorMsg +=  util::TtoStr(inp->lineNum());
-        errorMsg += " col";
-        errorMsg += util::TtoStr(inp->colNum());
-        return errorMsg;
+        return  c == ' ' || c == '\t' || c == '\n' || c== 'r';
     }
+
+    LexType::Result parserString (const TexStream::PtrType& inp) {
+#define PStrError(e) None(std::string(e) + createErroMsg(inp))
+        char del = inp->get();
+        unsigned int current = 1;
+        std::string str;
+        char cChar = inp->lookAhead(current);
+        while (cChar != del) {
+            if (cChar == -1 || cChar == '\n' || cChar == '\r') {
+                return PStrError("unfinished string end of file");
+            }
+            else if (cChar != '\\')
+            {
+                str.push_back(cChar);
+                ++current;
+            }
+            else{
+                ++current;
+                char c = inp->lookAhead(current);
+                switch (c) {
+                    case 'a': c = '\a'; break;
+                    case 'b': c = '\b'; break;
+                    case 'f': c = '\f'; break;
+                    case 'n': c = '\n'; break;
+                    case 'r': c = '\r'; break;
+                    case 't': c = '\t'; break;
+                    case 'v': c = '\v'; break;
+                    case 'x':{
+                        char l1 = inp->lookAhead(current+1);
+                        char l2 = inp->lookAhead(current+2);
+                        if (ishexnumber(l1) && ishexnumber(l2) ) {
+                            c = (hexavalue(l1) << 4) + hexavalue(l2);
+                        }
+                        else
+                        {
+                            return PStrError("unfinished string hex");
+                        }
+                        current += 2;
+                        break;
+                    }
+                    case -1:
+                        return PStrError("unfinished string escaped end of file");
+                    case '\\': case '\"': case '\'':
+                        break;
+                    case 'z': {  /* zap following span of spaces */
+                        while (isSpace(inp->lookAhead(current+1))) {
+                            ++current;
+                        }
+                        break;
+                    }
+                    default: {
+                        char l1 = inp->lookAhead(current+1);
+                        if (isnumber(c) && isnumber(l1)) {
+                            c = (c - '0') * 10 + l1 - '0';
+                            current += 1;
+                        }
+                        else{
+                            return PStrError("unfinished string escaped number");
+                        }
+                        break;
+                    }
+                }
+                str.push_back(c);
+                ++current;
+            }
+            cChar = inp->lookAhead(current);
+        }
+        return SomeT(Token(tk_string,str), inp->next(current+1));
+    }
+
     int processComment(const TexStream::PtrType& inp)
     {
         //long comment
@@ -148,12 +172,12 @@ namespace Parser{
                 nc = inp->lookAhead(start);
             }
             if (nc == -1) {
-                return -1;
+                return start;
             }
             return start + 1;
         }
     }
-#define SomeT(t,ninp) CPS::Some<Token,TexStream::PtrType>(t,ninp)
+
     LexType::Result parserToken(const TexStream::PtrType& inp )
     {
         if (inp->empty()) {
@@ -217,6 +241,10 @@ namespace Parser{
                 return parserToken(inp->next(offset));
             }
         }
+        else if (c == '\'' || c == '\"')
+        {
+            return parserString(inp);
+        }
         else//default
         {
             return CPS::Some<Token,TexStream::PtrType>(Token(c),inp->next());
@@ -272,7 +300,7 @@ namespace Parser{
     {
 
         static const auto& allHexP = numberParser([](char c){
-            return isnumber(c) || ('a' <= c && c <= 'f') ||('A' <= c && c <= 'F');
+            return ishexnumber(c);
         });
         static auto xP = satParser([](char c){return c == 'x' || c == 'X';});
         static auto preFixAllHexp = CONSLF(charParser('0'),_)

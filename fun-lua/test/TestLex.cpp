@@ -11,7 +11,28 @@
 #include "Util.h"
 #include <vector>
 #include "KeywordsHelper.h"
+using namespace std;
 void TestLex(){
+    
+    
+    //test string
+    rc::check("string \\x??",[](char c){
+        if (c <= 0) {
+            return ;
+        }
+        auto hex = util::TtoStr((int)c,16);
+        if (hex.size() == 1) {
+            hex = std::string("0") + hex ;
+        }
+        std::string str = "\"\\x" + hex + "\"";
+        RC_ASSERT(str.size() == 6);
+        auto r = Parser::parserTokenString(str);
+        
+        RC_ASSERT(!r->isNone());
+        RC_ASSERT(r->value().t == Parser::tk_string);
+        RC_ASSERT(r->value().value.front() == c);
+    });
+    
     
     //test HexnumberParser
     rc::check("HexnumberParser",[](const unsigned int& i,const unsigned int& d,const bool& sign){

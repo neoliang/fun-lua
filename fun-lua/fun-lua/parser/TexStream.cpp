@@ -35,10 +35,8 @@ namespace Parser{
     
     class FileStream : public TexStream
     {
-
-        
-        unsigned int _lineNum = 0;
-        unsigned int _currentCol =0;
+        unsigned int _lineNum = 1;
+        unsigned int _currentCol =1;
         long _cpos = 0;
         long _endPos = -1;
         AutoFile::Ptr _file = nullptr;
@@ -53,7 +51,7 @@ namespace Parser{
             {
                 if(get() == '\n') {
                     ++_lineNum;
-                    _currentCol = 0;
+                    _currentCol = 1;
                 }
                 else
                 {
@@ -120,9 +118,9 @@ namespace Parser{
     {
     private:
         std::shared_ptr<std::string> _stream;
-        unsigned int _lineNum = 0;
+        unsigned int _lineNum = 1;
         std::string::iterator iter;
-        unsigned int _currentCol =0;
+        unsigned int _currentCol =1;
         
         void moveToNext()
         {
@@ -133,7 +131,7 @@ namespace Parser{
             if (!empty()) {
                 if (*iter == '\n') {
                     ++_lineNum;
-                    _currentCol = 0;
+                    _currentCol = 1;
                 }
                 else
                 {

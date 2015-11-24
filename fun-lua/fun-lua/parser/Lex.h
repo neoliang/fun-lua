@@ -21,7 +21,15 @@ namespace Parser{
     const LexType& posHexnumberParser();
     
     const LexType& numberParser();
+    
+    
     LexType::Result parserToken(const TexStream::PtrType& inp );
+    
+    inline LexType::Result parserTokenString(const std::string& str)
+    {
+        auto stream = TexStream::fromString(str);
+        return parserToken(stream);
+    }
 
 }
 

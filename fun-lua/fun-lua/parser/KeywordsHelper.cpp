@@ -35,7 +35,15 @@ namespace Parser {
     };
     
     
-    
+    std::string lookupTokenString(TokenType t)
+    {
+        for (auto iter = _keywords.begin(); iter != _keywords.end(); ++iter) {
+            if (iter->second == t) {
+                return iter->first;
+            }
+        }
+        return "";
+    }
     TokenType lookupKeyword(const std::string& keyword)
     {
         auto iter = _keywords.find(keyword);

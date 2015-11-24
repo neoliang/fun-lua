@@ -33,7 +33,12 @@ void TestLex(){
         RC_ASSERT(r->value().value.front() == c);
     });
     
+    string cstr = "'中国'";
+    cout << cstr.length() << cstr << endl;
     
+    auto r = Parser::parserTokenString(cstr);
+    RC_ASSERT(!r->isNone());
+    cout << r->value().value << endl;
     //test HexnumberParser
     rc::check("HexnumberParser",[](const unsigned int& i,const unsigned int& d,const bool& sign){
         const bool hex =true;

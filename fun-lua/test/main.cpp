@@ -19,9 +19,9 @@ void TestLex();
 
 int main() {
     
-    TestParserResult();
-    TestCPSParser();
-    TestStream();
+//    TestParserResult();
+//    TestCPSParser();
+//    TestStream();
     TestLex();
     TestTokenStream();
     return 0;

@@ -32,13 +32,47 @@ void TestLex(){
         RC_ASSERT(r->value().t == Parser::tk_string);
         RC_ASSERT(r->value().value.front() == c);
     });
+    rc::check("string 中文",[](){
+        string cstr = "'严'";
+        auto r = Parser::parserTokenString(cstr);
+        RC_ASSERT(!r->isNone());
+        RC_ASSERT(r->value().value == cstr.substr(1,cstr.size() - 2));
+    });
+    rc::check("string \number",[](char c){
+        if (c <= 0) {
+            return ;
+        }
+        auto number = util::TtoStr((int)c);
+        std::string str = "'\\" + number + "'";
+        RC_ASSERT(str.size() <= 6 && str.size() >= 4);
+        auto r = Parser::parserTokenString(str);
+        
+        RC_ASSERT(!r->isNone());
+        RC_ASSERT(r->value().t == Parser::tk_string);
+        RC_ASSERT(r->value().value.front() == c);
+    });
+    rc::check("string \\z",[](){
+        string str = "'\\z     \n'";
+        auto r = Parser::parserTokenString(str);
+        RC_ASSERT(!r->isNone());
+        RC_ASSERT(r->value().t == Parser::tk_string);
+        RC_ASSERT(r->value().value.empty());
+    });
     
-    string cstr = "'中国'";
-    cout << cstr.length() << cstr << endl;
+    rc::check("string \\z string",[](bool newLine){
+        string str1 = "'\\z     ";
+        if (newLine) {
+            str1.push_back('\n');
+        }
+        std::string str = "hellow word";
+        str1 += str;
+        str1.push_back('\'');
+        auto r = Parser::parserTokenString(str1);
+        RC_ASSERT(!r->isNone());
+        RC_ASSERT(r->value().t == Parser::tk_string);
+        RC_ASSERT(r->value().value == str);
+    });
     
-    auto r = Parser::parserTokenString(cstr);
-    RC_ASSERT(!r->isNone());
-    cout << r->value().value << endl;
     //test HexnumberParser
     rc::check("HexnumberParser",[](const unsigned int& i,const unsigned int& d,const bool& sign){
         const bool hex =true;

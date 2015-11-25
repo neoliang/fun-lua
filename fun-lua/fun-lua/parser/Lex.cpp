@@ -87,6 +87,7 @@ namespace Parser{
             else{
                 ++current;
                 char c = inp->lookAhead(current);
+                bool saveValue = true;
                 switch (c) {
                     case 'a': c = '\a'; break;
                     case 'b': c = '\b'; break;
@@ -116,13 +117,32 @@ namespace Parser{
                         while (isSpace(inp->lookAhead(current+1))) {
                             ++current;
                         }
+                        saveValue = false;
                         break;
                     }
                     default: {
-                        char l1 = inp->lookAhead(current+1);
-                        if (isnumber(c) && isnumber(l1)) {
-                            c = (c - '0') * 10 + l1 - '0';
-                            current += 1;
+                        
+                        if (isnumber(c))
+                        {
+                            int n = 0;
+                            for (int i = 0; i<3; ++i) {
+                                char l1 = inp->lookAhead(current);
+                                if (isnumber(l1)) {
+                                    n = n* 10 + l1 - '0';
+                                }
+                                else{
+                                    break;
+                                }
+                                ++current;
+                            }
+                            --current;
+                            if (n >= UCHAR_MAX) {
+                                return PStrError("decimal escape too large");
+                            }
+                            else
+                            {
+                                c = (char)n;
+                            }
                         }
                         else{
                             return PStrError("unfinished string escaped number");
@@ -130,7 +150,10 @@ namespace Parser{
                         break;
                     }
                 }
-                str.push_back(c);
+                if (saveValue) {
+                    str.push_back(c);
+                }
+                
                 ++current;
             }
             cChar = inp->lookAhead(current);

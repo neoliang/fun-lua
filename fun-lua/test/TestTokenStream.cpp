@@ -22,24 +22,24 @@ void TestTokenStream()
         tstream = tstream->next();
     }
     
-//    for (auto iter = alltokens.begin(); iter != alltokens.end(); ++iter) {
-//        if (iter->t < 256) {
-//            cout << (char)iter->t ;
-//        }
-//        if (iter->t == Parser::tk_string) {
-//            cout << "\"" << iter->value << "\"";
-//        }
-//        else{
-//            std::string str = Parser::lookupTokenString((Parser::TokenType)iter->t);
-//            if (str != "") {
-//                cout << str ;
-//            }
-//            else
-//            {
-//                cout << iter->value;
-//            }
-//        }
-//    }
+    for (auto iter = alltokens.begin(); iter != alltokens.end(); ++iter) {
+        if (iter->t < 256) {
+            cout << (char)iter->t ;
+        }
+        if (iter->t == Parser::tk_string) {
+            cout << "\"" << iter->value << "\"";
+        }
+        else{
+            std::string str = Parser::lookupTokenString((Parser::TokenType)iter->t);
+            if (str != "") {
+                cout << str ;
+            }
+            else
+            {
+                cout << iter->value;
+            }
+        }
+    }
     
     std::vector<std::string> keywords = {
         "and", "break", "do", "else", "elseif",

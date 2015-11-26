@@ -32,6 +32,12 @@ namespace Parser {
         {"repeat",tk_repeat},
         {"until",tk_until},
         {"while",tk_while},
+        {"==",tk_equal},
+        {"~=",tk_notequal},
+        {"<=",tk_le} , //<=
+        {">=",tk_ge} ,
+        {"..",tk_concat},
+        {"...",tk_3dots},
     };
     
     

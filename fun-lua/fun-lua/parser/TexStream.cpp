@@ -27,7 +27,7 @@ namespace Parser{
             if (fp == nullptr) {
                 return nullptr;
             }
-            return std::shared_ptr<AutoFile>(new AutoFile(fp));
+            return std::make_shared<AutoFile>(fp);
         }
         
         typedef std::shared_ptr<AutoFile> Ptr;
@@ -106,12 +106,12 @@ namespace Parser{
         
         TexStream::PtrType next(unsigned int i =1)const
         {
-            auto temp = new FileStream(*this);
+            auto temp = std::make_shared<FileStream>(*this);
             while (i >0) {
                 temp->moveToNext();
                 --i;
             }
-            return PtrType(temp);
+            return temp;
         }
     };
     class StringStream : public TexStream
@@ -143,7 +143,7 @@ namespace Parser{
     public:
         StringStream(const std::string& str)
         {
-            _stream = std::shared_ptr<std::string>(new std::string(str));
+            _stream = std::make_shared<std::string>(str);
             iter = _stream->begin();
         }
 
@@ -176,21 +176,20 @@ namespace Parser{
         }
         TexStream::PtrType next(unsigned int i = 1)const
         {
-            auto temp = new StringStream(*this);
+            auto temp = std::make_shared<StringStream>(*this);
             while (i > 0) {
                 temp->moveToNext();
                 --i;
             }
-            
-            return PtrType(temp);
+            return temp;
         }
     };
     TexStream::PtrType TexStream::fromFile(const std::string &file)
     {
-        return PtrType(new FileStream(file));
+        return std::make_shared<FileStream>(file);
     }
     TexStream::PtrType TexStream::fromString(const std::string &str)
     {
-        return PtrType(new StringStream(str));
+        return std::make_shared<StringStream>(str);
     }
 }

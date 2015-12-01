@@ -16,8 +16,14 @@ namespace Parser{
     {
         while (_cpos >= _tokens->size()) {
             auto r = parserToken(_textStream);
-            (*_tokens).push_back(r->value());
-            _textStream = r->remain();
+            if (r->isNone()) {
+                throw std::runtime_error(r->errorMsg());
+            }
+            else
+            {
+                (*_tokens).push_back(r->value());
+                _textStream = r->remain();
+            }
         }
         return (*_tokens)[_cpos];
     }

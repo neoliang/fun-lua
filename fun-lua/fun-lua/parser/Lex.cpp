@@ -36,6 +36,7 @@ namespace Parser{
 
     LexType::Result idp(const TexStream::PtrType& inp);
     
+    
     inline LexTypeChar::Result item(const  TexStream::PtrType& inp)
     {
         if (inp->empty()) {
@@ -208,7 +209,7 @@ namespace Parser{
         }
         const char c = inp->get();
         if (isnumber(c)) {
-            return numberParser().fun(inp);
+            return numberParser(inp);
         }
         else if (c == '=' && inp->lookAhead(1) == '=')
         {
@@ -245,7 +246,7 @@ namespace Parser{
             }
             else if(isnumber(l1))
             {
-                return numberParser().fun(inp);
+                return numberParser(inp);
             }
             else
             {
@@ -263,6 +264,10 @@ namespace Parser{
             {
                 return parserToken(inp->next(offset));
             }
+        }
+        else if (c == '-' && isdigit(inp->lookAhead(1)))
+        {
+            return numberParser(inp);
         }
         else if (c == '\'' || c == '\"')
         {
@@ -294,63 +299,43 @@ namespace Parser{
         }
         
     }
-
-    const CPS::CPSType<std::string, TexStream::PtrType>& numberParser(std::function<bool(char)> pred)
+    
+    const CPS::CPSType<std::string, TexStream::PtrType>& digitsp(std::function<bool(char)> isDig)
     {
-        static auto hexParser = satParser(pred);
-        
-        static auto hexsP  = CPS::Many1(hexParser);
-        static auto dotP = charParser('.');
-        static auto dotHexsP = CONSF(std::string, TexStream::PtrType, dotP, _)
-        CONS(std::string, TexStream::PtrType, hexsP, hexs)
-        std::string r(".");
-        r.insert(r.end(), hexs.begin(),hexs.end());
-        RET(r, TexStream::PtrType);
-        ENDCONS;
-        ENDCONS;
-        static auto optionDotP = CPS::Option(dotHexsP);
-        static auto hexsdothexsP = CONSF(std::string, TexStream::PtrType, hexsP, hex1)
-        CONS(std::string, TexStream::PtrType, optionDotP, hex2)
-        std::string hex1Str(hex1.begin(),hex1.end());
-        RET((std::string)(hex1Str + hex2), TexStream::PtrType);
-        ENDCONS;
-        ENDCONS;
-        static auto allHexP = CPS::Choice<std::string,TexStream::PtrType>(dotHexsP, hexsdothexsP);
-        return allHexP;
-    }
-
-    const LexType& posHexnumberParser()
-    {
-
-        static const auto& allHexP = numberParser([](char c){
-            return ishexnumber(c);
-        });
-        static auto xP = satParser([](char c){return c == 'x' || c == 'X';});
-        static auto preFixAllHexp = CONSLF(charParser('0'),_)
-        CONSL(xP,x)
-        CONSL(allHexP, hexs)
-        Token t;
-        t.t = tk_number;
-        t.value.push_back('0');
-        t.value.push_back(x);
-        t.value.insert(t.value.end(), hexs.begin(),hexs.end());
-        RETL(t);
-        ENDCONS;
-        ENDCONS;
-        ENDCONS;
-        return preFixAllHexp;
+        const static CPS::CPSType<std::string, TexStream::PtrType> r = {
+            [=] (const TexStream::PtrType& inp)->CPS::CPSType<std::string, TexStream::PtrType>::Result{
+                std::string digits;
+                unsigned int i = 0;
+                char nc = inp->lookAhead(i);
+                while (isDig(nc)) {
+                    digits.push_back(nc);
+                    ++i;
+                    nc = inp->lookAhead(i);
+                }
+                return CPS::Some(digits, inp->next(i));
+            },
+            ""
+        };
+        return r;
     }
     
-    const LexType& posNumberParser()
+    CPS::CPSType<std::string, TexStream::PtrType> posnumberP(std::function<bool(char)> isDig,std::function<bool(char)> isE)
     {
+        const static auto optiondig = CPS::Option(digitsp(isDig));
+        auto dot = satParser([](char c){return c == '.';});
+        const static auto dotDig = CONSF(std::string, TexStream::PtrType,dot , _)
+        CONS(std::string, TexStream::PtrType, digitsp(isDig), dig)
+        auto dotdigs  = std::string(".") + dig;
+        RET(dotdigs, TexStream::PtrType);
+        ENDCONS;
+        ENDCONS;
+        const static auto optionDotDig = CPS::Option(dotDig);
         
-        static const auto& numberP = numberParser([](char c){return isnumber(c);});
-        static const auto& digitP =  CPS::Many1(satParser([](char c){return isnumber(c);}));
-        static auto eP = satParser([](char c){return c == 'e' || c == 'E';});
-        static auto optionSign = CPS::Option(satParser([](char c){return c == '+' || c == '-';}));
-        static auto eNP = CONSF(std::string, TexStream::PtrType, eP, e)
+        static const auto eP = satParser(isE);
+        static const auto optionSign = CPS::Option(satParser([](char c){return c == '+' || c == '-';}));
+        static const auto eNP = CONSF(std::string, TexStream::PtrType, eP, e)
         CONS(std::string, TexStream::PtrType, optionSign, sig)
-        CONS(std::string, TexStream::PtrType,digitP, ePart)
+        CONS(std::string, TexStream::PtrType,digitsp(isDig), ePart)
         std::string r;
         r.push_back(e);
         if (sig == '+' || sig == '-') {
@@ -361,51 +346,59 @@ namespace Parser{
         ENDCONS;
         ENDCONS;
         ENDCONS;
-        static auto optionENP = CPS::Option(eNP);
-        static auto preFixAllHexp = CONSLF(numberP,numbers)
-        CONSL(optionENP,es)
-        Token t;
-        t.t = tk_number;
-        t.value = numbers + es;
-        RETL(t);
-        ENDCONS;
-        ENDCONS;
-        return preFixAllHexp;
-    }
-    
-    const LexType& numberParser()
-    {
+        const static auto optionE = CPS::Option(eNP);
         
-        const static LexType posNumber = {[](const TexStream::PtrType& inp)->LexType::Result{
-            char ahead1 = inp->lookAhead(1);
-            char cChar = inp->lookAhead(0);
-            if (cChar == '0' &&  (ahead1 == 'x' || ahead1 == 'X') ) {
-                return posHexnumberParser().fun(inp);
-            }
-            else
-            {
-                return posNumberParser().fun(inp);
-            }
-            
-        },""};
-        const static auto optionSign = CPS::Option(satParser([](char c){ return c == '-';}));
-        static auto np = CONSLF(optionSign, s)
-        CONSL(posNumber, nt)
-        if (s == '-' ) {
-            Token nnt;
-            nnt.t = tk_number;
-            nnt.value = "-";
-            nnt.value += nt.value;
-            RETL(nnt);
+        CONS(std::string, TexStream::PtrType,optiondig,intPart)
+        CONS(std::string, TexStream::PtrType,optionDotDig,dotFloat)
+        CONS(std::string, TexStream::PtrType,optionE,ePart)
+        if (intPart == "" && dotFloat == "") {
+            return CPS::CPSType<std::string, TexStream::PtrType>::failure("parser number error");
         }
         else
         {
-            RETL((Token)nt);
+            RET(intPart + dotFloat + ePart, TexStream::PtrType);
         }
         ENDCONS;
         ENDCONS;
-        static std::string _ = np.label = "parser number";
-        return np;
+        ENDCONS;
+    }
+
+    LexType::Result numberParser(const TexStream::PtrType& inp)
+    {
+        const static auto posHexP = posnumberP(ishexnumber, [](char c){return c == 'P' || c == 'p';});
+        const static auto posDecP = posnumberP(isdigit,[](char c){return c == 'E' || c == 'e';});
+        bool isNeg = false;
+        bool isHex = false;
+        int offset = 0;
+        if (inp->get() == '-') {
+            isNeg = true;
+            ++offset;
+        }
+        if (inp->lookAhead(offset) == '0' && (inp->lookAhead(offset + 1) == 'x' || inp->lookAhead(offset + 1) == 'X') ) {
+            isHex = true;
+            offset += 2;
+        }
+        CPS::CPSType<std::string, TexStream::PtrType>::Result r = nullptr;
+        if (isHex) {
+            r = posHexP.fun(inp->next(offset));
+        }
+        else
+        {
+            r = posDecP.fun(inp->next(offset));
+        }
+        if (r->isNone()) {
+            return None(r->errorMsg());
+        }
+        std::string strVal;
+        if (isNeg) {
+            strVal.push_back('-');
+        }
+        if (isHex) {
+            strVal.push_back('0');
+            strVal.push_back('x');
+        }
+        strVal += r->value();
+        return SomeT(Token(tk_number,strVal), r->remain());
     }
     
 }

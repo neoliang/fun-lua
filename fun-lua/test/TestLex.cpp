@@ -73,39 +73,12 @@ void TestLex(){
         RC_ASSERT(r->value().value == str);
     });
     
-    //test HexnumberParser
-    rc::check("HexnumberParser",[](const unsigned int& i,const unsigned int& d,const bool& sign){
-        const bool hex =true;
-        std::string hexStr;
-        int base = 10;
-        if (hex) {
-            hexStr = "0x";
-            base = 16;
-        }
-        if (i != 0 ) {
-             hexStr += util::TtoStr(i,base);
-        }
-        std::string digit;
-        if (d != 0) {
-            hexStr += ".";
-            hexStr += util::TtoStr(d,base);
-        }
-        if (sign) {
-            hexStr = "-" + hexStr;
-        }
-        if (hexStr == "") {
-            return ;
-        }
-        auto stream = Parser::TexStream::fromString(hexStr);
-        auto r = Parser::numberParser().fun(stream);
-        if (i == 0 && d == 0 ) {
-            RC_ASSERT(r->isNone());
-        }
-        else{
-            RC_ASSERT(!r->isNone());
-            RC_ASSERT(r->value().value == hexStr);
-        }
+    
+    rc::check("numberParser0",[](){
+        auto r = Parser::numberParser(Parser::TexStream::fromString("-"));
+        RC_ASSERT(r->isNone());
     });
+    
     
     rc::check("numberParser",[](const unsigned int& i,const unsigned int& d,const bool& sign){
         const bool hex =false;
@@ -129,8 +102,7 @@ void TestLex(){
         if (hexStr == "") {
             return ;
         }
-        auto stream = Parser::TexStream::fromString(hexStr);
-        auto r = Parser::numberParser().fun(stream);
+        auto r = Parser::numberParser(Parser::TexStream::fromString(hexStr));
         if (i == 0 && d == 0 ) {
             RC_ASSERT(r->isNone());
         }
@@ -140,6 +112,72 @@ void TestLex(){
         }
     });
     
+    
+    
+    //test HexnumberParser
+    rc::check("HexnumberParser1",[](){
+        const unsigned int i = 10;
+        const unsigned int d =0;
+        const bool sign = false;
+        std::string hexStr;
+        
+        hexStr = "0x";
+        int base = 16;
+        if (i != 0 ) {
+            hexStr += util::TtoStr(i,base);
+        }
+        std::string digit;
+        if (d != 0) {
+            hexStr += ".";
+            hexStr += util::TtoStr(d,base);
+        }
+        if (sign) {
+            hexStr = "-" + hexStr;
+        }
+        if (hexStr == "") {
+            return ;
+        }
+        auto r = Parser::parserTokenString(hexStr);
+        if (i == 0 && d == 0 ) {
+            RC_ASSERT(r->isNone());
+        }
+        else{
+            RC_ASSERT(!r->isNone());
+            RC_ASSERT(r->value().value == hexStr);
+        }
+    });
+    
+    //test HexnumberParser
+    rc::check("HexnumberParser",[](const unsigned int& i,const unsigned int& d,const bool& sign){
+        std::string hexStr;
+
+        hexStr = "0x";
+        int base = 16;
+        if (i != 0 ) {
+             hexStr += util::TtoStr(i,base);
+        }
+        std::string digit;
+        if (d != 0) {
+            hexStr += ".";
+            hexStr += util::TtoStr(d,base);
+        }
+        if (sign) {
+            hexStr = "-" + hexStr;
+        }
+        if (hexStr == "") {
+            return ;
+        }
+        auto stream = Parser::TexStream::fromString(hexStr);
+        auto r = Parser::numberParser(stream);
+        if (i == 0 && d == 0 ) {
+            RC_ASSERT(r->isNone());
+        }
+        else{
+            RC_ASSERT(!r->isNone());
+            RC_ASSERT(r->value().value == hexStr);
+        }
+    });
+
     
     //check identifer
     std::vector<std::string> keywords = {

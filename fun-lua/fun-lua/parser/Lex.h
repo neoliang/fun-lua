@@ -17,12 +17,7 @@ namespace Parser{
     typedef CPS::CPSType<Token, TexStream::PtrType> LexType;
     typedef CPS::CPSType<char, TexStream::PtrType> LexTypeChar;
     
-
-    const LexType& posHexnumberParser();
-    
-    const LexType& numberParser();
-    
-    
+    LexType::Result numberParser(const TexStream::PtrType& inp);
     LexType::Result parserToken(const TexStream::PtrType& inp );
     
     inline LexType::Result parserTokenString(const std::string& str)
